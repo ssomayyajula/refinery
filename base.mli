@@ -17,19 +17,20 @@ module type LOGIC = sig
   type term
   type form
   
-  type decl    = term_var * form
-  type sequent = decl list * form
+  type hypos = (term_var * form) list
+  type sequent = hypos * form
   
-  type decomposition = sequent -> sequent list
-  type validation    = (sequent * term) list -> term
-  type rule          = decomposition * validation
+  type rule = (sequent -> sequent list) *
+              ((sequent * term) list -> term)
   
   type proof
   type complete_proof
   
   exception InvalidDecomposition of term_var option * sequent
-  exception InvalidSubgoals of term_var option * sequent list
+  exception InvalidSubgoals of term_var option * (sequent * term) list
   
+  val get_var : hypos -> term_var -> hypos -> term_var
+  val split : hypos -> term_var -> hypos * form * hypos
   val proof_of_sequent : sequent -> proof Or_error.t
   val apply_rule : rule -> sequent -> proof
   val complete : proof -> complete_proof option
@@ -37,12 +38,10 @@ module type LOGIC = sig
   val pp_proof : Format.formatter -> proof -> unit
 end
 
-module Logic : functor (T : TERM_LANG) (F : FORM_LANG) -> LOGIC
+module Logic : functor (T : TERM_LANG) (F : FORM_LANG) ->
+  LOGIC with type term_var = T.var and type term = T.t and type form = F.t
 
 module type PROOF_SYSTEM = sig
-  include module type of Logic(T)(F)
+  include LOGIC
   val parse_rule : string -> rule
 end
-
-(*val extract : ('a * 'b) list -> 'a -> ('a * b) list * 'b * ('a * b) list
-*)
