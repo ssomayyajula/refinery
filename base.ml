@@ -16,14 +16,16 @@ module type LOGIC = sig
   type rule = (sequent -> sequent list) *
               ((sequent * term) list -> term)
   
-  type proof
+  type proof = Sequent of sequent
+             | Proof of sequent * rule * proof list
   type complete_proof
   
   exception InvalidDecomposition of term_var option * sequent
   exception InvalidSubgoals of term_var option * (sequent * term) list
   
-  val get_var : hypos -> term_var -> hypos -> term_var
+  val take_last : hypos -> int -> hypos
   val split : hypos -> term_var -> hypos * form * hypos
+  val parse_sequent : string -> sequent
   val proof_of_sequent : sequent -> proof Or_error.t
   val apply_rule : rule -> sequent -> proof
   val complete : proof -> complete_proof option
@@ -33,7 +35,7 @@ end
 
 module type PROOF_SYSTEM = sig
   include LOGIC
-  val parse_rule : string -> rule
+  val parse_rule : string -> rule option
 end
 
 module Logic (T : TERM_LANG) (F : FORM_LANG) :
@@ -56,20 +58,19 @@ module Logic (T : TERM_LANG) (F : FORM_LANG) :
   exception InvalidDecomposition of term_var option * sequent
   exception InvalidSubgoals of term_var option * (sequent * term) list
   
+  let take_last h i = List.take (List.rev h) i
+  
   let rec index d ?(i=0) = function
     | [] -> invalid_arg "index"
     | h :: t -> if h = d then i else index d ~i:(i + 1) t
-  
-  let get_var h f h' =
-    let v = List.Assoc.find_exn h f in
-    let i = index (f, v) h in
-    fst (List.nth_exn h' i)
   
   let split h v =
     let f = List.Assoc.find_exn h v in
     let i = index (v, f) h in
     let (hl, hr) = List.split_n h i in
     (List.rev (List.tl_exn (List.rev hl)), f, hr)
+  
+  let parse_sequent s = failwith "TODO implement"
   
   let proof_of_sequent ((h, _) as s) =
     if List.contains_dup (List.map h fst) then

@@ -2,11 +2,16 @@ module type CAML_LIKE = sig
   type var
   type t = [ `Var of var
            | `Lambda of var * t
-           | `App of t * t ]
+           | `App of t * t
+           | `Fst of t
+           | `Snd of t
+           | `Pair of t * t
+           | `Match of t * ((string * var) * t) * ((string * var) * t)
+           | `L of t
+           | `R of t
+           | `Any of t ]
   include Base.TERM_LANG with
     type var := var and type t := t
-  (* subst e1 e2 x = e1{e2/x} *)
-  val subst : t -> t -> var -> t
 end
 
 module OCaml : CAML_LIKE
