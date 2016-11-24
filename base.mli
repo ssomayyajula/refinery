@@ -30,6 +30,7 @@ module type LOGIC = sig
              | Proof of sequent * rule * proof list
   type complete_proof
   
+  exception InvalidLabel of term_var * hypos
   exception InvalidDecomposition of term_var option * sequent
   exception InvalidSubgoals of term_var option * (sequent * term) list
   

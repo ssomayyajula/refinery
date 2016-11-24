@@ -20,6 +20,7 @@ module type LOGIC = sig
              | Proof of sequent * rule * proof list
   type complete_proof
   
+  exception InvalidLabel of term_var * hypos
   exception InvalidDecomposition of term_var option * sequent
   exception InvalidSubgoals of term_var option * (sequent * term) list
   
@@ -55,6 +56,7 @@ module Logic (T : TERM_LANG) (F : FORM_LANG) :
   
   type complete_proof = CompleteProof of sequent * rule * complete_proof list
   
+  exception InvalidLabel of term_var * hypos
   exception InvalidDecomposition of term_var option * sequent
   exception InvalidSubgoals of term_var option * (sequent * term) list
   
@@ -65,10 +67,13 @@ module Logic (T : TERM_LANG) (F : FORM_LANG) :
     | h :: t -> if h = d then i else index d ~i:(i + 1) t
   
   let split h v =
-    let f = List.Assoc.find_exn h v in
-    let i = index (v, f) h in
-    let (hl, hr) = List.split_n h i in
-    (List.rev (List.tl_exn (List.rev hl)), f, hr)
+    Option.value_map
+      (List.Assoc.find h v)
+      ~default:(raise (InvalidLabel (v, h)))
+      ~f:(fun f ->
+            let i = index (v, f) h in
+            let (hl, hr) = List.split_n h i in
+            (List.rev (List.tl_exn (List.rev hl)), f, hr))
   
   let parse_sequent s = failwith "TODO implement"
   

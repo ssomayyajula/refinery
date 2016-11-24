@@ -10,7 +10,10 @@ NAME=refined_logic
 
 $(NAME): $(MODULES)
 	$(CC) -c $(CFLAGS) main.ml
-	$(CC) -a -o $(NAME).cma $(LDFLAGS) $(CFLAGS) $(addsuffix .cmo, $^) main.cmo
+	$(CC) -o $(NAME) $(LDFLAGS) $(CFLAGS) $(addsuffix .cmo, $^) main.cmo
+
+library: $(MODULES)
+	$(CC) -a -o $(NAME).cma $(LDFLAGS) $(CFLAGS) $(addsuffix .cmo, $^)
 
 %: %.mli %.ml
 	$(CC) -c $(CFLAGS) $^
@@ -20,4 +23,4 @@ paper: $(addsuffix .mli, $(MODULES)) $(addsuffix .ml, $(MODULES))
 	pdflatex $(NAME).tex
 
 clean:
-	rm -rf *.cm* *.tex *.pdf *.log *.aux
+	rm -rf *.cm* $(NAME) *.tex *.pdf *.log *.aux

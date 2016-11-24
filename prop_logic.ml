@@ -155,7 +155,7 @@ struct
       | sub -> raise (InvalidSubgoals (None, sub))))
   
   let axiom (a : term_var) : rule =
-    ((fun _ -> []), (fun _ -> `Var a))
+    ((fun (h, _) -> let _ = split h a in []), (fun _ -> `Var a))
   
   let parse_rule s =
     Option.value_map (String.lsplit2 ~on:' ' s)

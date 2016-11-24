@@ -11,8 +11,7 @@ let () =
   let open Core.Std in
   let fmt = Format.std_formatter in
   Command.basic
-    ~summary:"A proof assistant for refinement propositional logic that outputs the extract term in OCaml"
-    ~readme:(fun _ -> "")
+    ~summary:"A proof assistant for refinement propositional logic that outputs extract terms in OCaml"
     Command.Spec.(empty +> anon ("sequent" %: (Arg_type.create PL.parse_sequent)))
     (fun s () ->
       match PAPL.prove read_line fmt s with
