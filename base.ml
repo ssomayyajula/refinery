@@ -67,13 +67,12 @@ module Logic (T : TERM_LANG) (F : FORM_LANG) :
     | h :: t -> if h = d then i else index d ~i:(i + 1) t
   
   let split h v =
-    Option.value_map
-      (List.Assoc.find h v)
-      ~default:(raise (InvalidLabel (v, h)))
-      ~f:(fun f ->
-            let i = index (v, f) h in
-            let (hl, hr) = List.split_n h i in
-            (List.rev (List.tl_exn (List.rev hl)), f, hr))
+    match List.Assoc.find h v with
+    | Some f ->
+        let i = index (v, f) h in
+        let (hl, hr) = List.split_n h i in
+        (hl, f, Option.value_map (List.tl hr) ~default:[] ~f:(Fn.id))
+    | None   -> raise (InvalidLabel (v, h))
 
   let print_list lst =
     print_string "[";
@@ -110,7 +109,7 @@ module Logic (T : TERM_LANG) (F : FORM_LANG) :
 
   let parse_sequent s =
     let lst = Str.split (Str.regexp "|-") s in
-    print_list lst;
+    (*print_list lst;*)
     match List.length lst with
     | 0 -> assert false
     | 1 -> failwith ("A sequent must have at least one hypothesis!")
@@ -149,8 +148,16 @@ module Logic (T : TERM_LANG) (F : FORM_LANG) :
   
   let pp_sequent fmt (h, f) = fprintf fmt "%a |- %a" pp_hypos h F.pp_form f
   
-  let rec pp_proof fmt = function
-      Sequent s         -> pp_sequent fmt s
-    | Proof (s, _, sub) -> fprintf fmt "@[<v 2>%a@,%a@;<0 -2>@]"
-                             pp_sequent s (pp_print_list pp_proof) sub
+  let rec pp_proof fmt =
+    let rec helper i p =
+      for j = 1 to i do
+        String.pp fmt " "
+      done;
+      match p with
+      | Sequent s         -> pp_sequent fmt s
+      | Proof (s, _, sub) ->
+          pp_sequent fmt s;
+          String.pp fmt "\n";
+          List.iter sub (helper (i + 2))
+    in helper 0
 end

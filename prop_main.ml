@@ -15,6 +15,6 @@ let () =
     Command.Spec.(empty +> anon ("sequent" %: (Arg_type.create PL.parse_sequent)))
     (fun s () ->
       match PAPL.prove read_line fmt s with
-      | Ok p    -> OCaml.pp_t fmt (PL.extract_term p)
+      | Ok p    -> OCaml.pp_t fmt (PL.extract_term p); String.pp fmt "\n"
       | Error e -> raise (Error.to_exn e)) |>
   Command.run

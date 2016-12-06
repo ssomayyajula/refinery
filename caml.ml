@@ -31,56 +31,43 @@ module OCaml : CAML_LIKE = struct
   
   let pp_var = String.pp
   
-  let pp_t fmt t =
-    (* Taken from https://caml.inria.fr/pub/docs/manual-ocaml/coreexamples.html *)
-    let lparen prec cprec =
-      if prec > cprec then String.pp fmt "(" in
-    let rparen prec cprec =
-      if prec > cprec then String.pp fmt ")" in
-    let rec pp prec = function
-      | `Var v -> String.pp fmt v
-      | `Lambda (x, e) ->
-          lparen prec 0;
-          String.pp fmt "fun ";
-          String.pp fmt x;
-          String.pp fmt " -> ";
-          pp 0 e;
-          rparen prec 0
-      | `App (e1, e2) ->
-          lparen prec 2;
-          pp 2 e1;
-          pp 2 e2;
-          rparen prec 2
-      | `Fst e -> pp prec (`App (`Var "fst", e))
-      | `Snd e -> pp prec (`App (`Var "snd", e))
-      | `Any e -> pp prec (`App (`Var "any", e))
-      | `Pair (e1, e2) ->
-          lparen prec 1;
-          pp 1 e1;
-          String.pp fmt ", ";
-          pp 1 e2;
-          rparen prec 1
-      | `Match (e, ((c1, v1), e1), ((c2, v2), e2)) ->
-          lparen prec 0;
-          String.pp fmt "match ";
-          pp 0 e;
-          String.pp fmt (" with " ^ (c1 ^ v1) ^ " -> ");
-          pp 0 e1;
-          String.pp fmt (" | " ^ (c2 ^ v2) ^ " -> ");
-          pp 0 e2;
-          rparen prec 0;
-      | `L e ->
-          lparen prec 2;
-          String.pp fmt "`L ";
-          pp 2 e;
-          rparen prec 2
-      | `R e ->
-          lparen prec 2;
-          String.pp fmt "`R ";
-          pp 2 e;
-          rparen prec 2
-    in
-    String.pp fmt
-    "type void = {none:'a.'a}\nlet any (x : void) = failwith \"any\" in ";
-    pp 0 t
+  let rec pp_t fmt = function
+    | `Var v -> String.pp fmt v
+    | `Lambda (x, e) ->
+        String.pp fmt "(fun ";
+        String.pp fmt x;
+        String.pp fmt " -> ";
+        pp_t fmt e;
+        String.pp fmt ")"
+    | `App (e1, e2) ->
+        String.pp fmt "(";
+        pp_t fmt e1;
+        pp_t fmt e2;
+        String.pp fmt ")"
+    | `Fst e -> pp_t fmt (`App (`Var "fst", e))
+    | `Snd e -> pp_t fmt (`App (`Var "snd", e))
+    | `Any e -> pp_t fmt (`App (`Var "Obj.magic", e))
+    | `Pair (e1, e2) ->
+        String.pp fmt "(";
+        pp_t fmt e1;
+        String.pp fmt ", ";
+        pp_t fmt e2;
+        String.pp fmt ")"
+    | `Match (e, ((c1, v1), e1), ((c2, v2), e2)) ->
+        String.pp fmt "(match";
+        pp_t fmt e;
+        String.pp fmt (" with " ^ (c1 ^ v1) ^ " -> ");
+        pp_t fmt e1;
+        String.pp fmt (" | " ^ (c2 ^ v2) ^ " -> ");
+        pp_t fmt e2;
+        String.pp fmt ")"
+    | `L e ->
+        String.pp fmt "(";
+        String.pp fmt "`L ";
+        pp_t fmt e;
+        String.pp fmt ")"
+    | `R e ->
+        String.pp fmt "(`R";
+        pp_t fmt e;
+        String.pp fmt ")"
 end
