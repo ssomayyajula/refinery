@@ -19,4 +19,4 @@ library: $(MODULES)
 	$(CC) -c $(CFLAGS) $^
 
 clean:
-	rm -rf *.cm* prop fol *.tex *.pdf *.log *.aux
+	rm -rf *.cm* prop *.tex *.pdf *.log *.aux
