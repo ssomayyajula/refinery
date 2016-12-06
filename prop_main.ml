@@ -2,11 +2,13 @@ open Interactive
 open Prop_logic
 open Caml
 
-(* Generates a proof assistant for refinement propositional logic
-   with extract terms in OCaml *)
+(* Generates a proof assistant for refinement propositional logic with extract
+ * terms in OCaml. *)
 module PL   = PropLogic(OCaml)
 module PAPL = ProofAssistant(PL);;
 
+(* REPL for the proof assistant, which utilizes sequent calculus where terms are
+ * OCaml variables and formulae are propositions from propositional logic. *)
 let () =
   let open Core.Std in
   let fmt = Format.std_formatter in

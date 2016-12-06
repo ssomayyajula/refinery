@@ -1,5 +1,11 @@
+(* A CAML_LIKE language defines an expression type that is similar to the core
+ * sublanguage of Caml. *)
 module type CAML_LIKE = sig
+  (* The type of caml-like variables. *)
   type var
+
+  (* The caml-like polymorphic variant type, which supports lamdba calculus as
+   * well as pairs with projection operations and match statements. *)
   type t = [ `Var of var
            | `Lambda of var * t
            | `App of t * t
@@ -14,4 +20,5 @@ module type CAML_LIKE = sig
     type var := var and type t := t
 end
 
+(* OCaml is an example of a CAML_LIKE language. *)
 module OCaml : CAML_LIKE
