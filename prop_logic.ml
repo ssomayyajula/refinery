@@ -17,9 +17,9 @@ module PropLang = struct
   (* Taken from https://caml.inria.fr/pub/docs/manual-ocaml/coreexamples.html *)
   let pp_form fmt p =
     let lparen prec cprec =
-      if prec > cprec then String.pp fmt "(" in
+      if prec >= cprec then String.pp fmt "(" in
     let rparen prec cprec =
-      if prec > cprec then String.pp fmt ")" in
+      if prec >= cprec then String.pp fmt ")" in
     let rec pp prec = function
       | Atom s -> String.pp fmt s
       | Not p ->
