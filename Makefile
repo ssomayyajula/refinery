@@ -5,7 +5,7 @@ CC=ocamlfind ocamlc
 CFLAGS=-thread -package $(DEPS)
 LDFLAGS=-linkpkg
 # Modules in dependency order and project name
-MODULES=base interactive caml prop_logic
+MODULES=base interactive caml propAst propParser propLexer prop_logic
 NAME=refined_logic
 
 $(NAME): $(MODULES)

@@ -1,17 +1,18 @@
+open PropAst
 open Base
 
 module PropLang = struct
   open Core.Std
   open Sexplib
+  open PropParser
+  open PropLexer
   
-  type t = Prop of string
-         | And of t * t
-         | Or of t * t
-         | Implies of t * t
-         | Not of t
-         | False
+  type t = PropAst.prop
   
-  let parse_form s = failwith "TODO implement"
+  let parse_form s =
+    let lexbuf = Lexing.from_string s in
+    let ast = PropParser.prog PropLexer.read lexbuf in
+    ast
   
   (* Taken from https://caml.inria.fr/pub/docs/manual-ocaml/coreexamples.html *)
   let pp_form fmt p =
@@ -20,31 +21,31 @@ module PropLang = struct
     let rparen prec cprec =
       if prec > cprec then String.pp fmt ")" in
     let rec pp prec = function
-      | Prop p -> String.pp fmt p
-      | False -> String.pp fmt "false"
-      | And (a, b) ->
-          lparen prec 2;
-          pp 2 a;
-          String.pp fmt " ^ ";
-          pp 2 b;
-          rparen prec 2
-      | Or (a, b) ->
-          lparen prec 1;
-          pp 1 a;
-          String.pp fmt " \\/ ";
-          pp 1 b;
-          rparen prec 1
-      | Implies (a, b) ->
-          lparen prec 0;
-          pp 0 a;
-          String.pp fmt " => ";
-          pp 0 b;
-          rparen prec 0
-      | Not a ->
+      | Atom s -> String.pp fmt s
+      | Not p ->
           String.pp fmt "~";
           lparen prec 3;
-          pp 3 a;
+          pp 3 p;
           rparen prec 3;
+      | And (p1,p2) ->
+          lparen prec 2;
+          pp 2 p1;
+          String.pp fmt " ^ ";
+          pp 2 p2;
+          rparen prec 2
+      | Or (p1,p2) ->
+          lparen prec 1;
+          pp 1 p1;
+          String.pp fmt " \\/ ";
+          pp 1 p2;
+          rparen prec 1
+      | Implies (p1,p2) ->
+          lparen prec 0;
+          pp 0 p1;
+          String.pp fmt " => ";
+          pp 0 p2;
+          rparen prec 0
+      | False -> String.pp fmt "false"
     in pp 0 p
 end
 
