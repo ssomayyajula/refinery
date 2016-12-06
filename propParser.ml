@@ -9,13 +9,13 @@ module Basics = struct
     | NOT
     | LPAREN
     | IMPLIES
-    | ID of (
-# 21 "propParser.mly"
-       (string)
-# 16 "propParser.ml"
-  )
     | FALSE
     | EOF
+    | ATOM of (
+# 21 "propParser.mly"
+       (string)
+# 18 "propParser.ml"
+  )
     | AND
   
 end
@@ -51,10 +51,10 @@ let rec _menhir_run7 : _menhir_env -> 'ttv_tail * _menhir_state * 'tv_prop -> 't
     let _menhir_env = _menhir_discard _menhir_env in
     let _tok = _menhir_env._menhir_token in
     match _tok with
+    | ATOM _v ->
+        _menhir_run4 _menhir_env (Obj.magic _menhir_stack) MenhirState7 _v
     | FALSE ->
-        _menhir_run4 _menhir_env (Obj.magic _menhir_stack) MenhirState7
-    | ID _v ->
-        _menhir_run3 _menhir_env (Obj.magic _menhir_stack) MenhirState7 _v
+        _menhir_run3 _menhir_env (Obj.magic _menhir_stack) MenhirState7
     | LPAREN ->
         _menhir_run2 _menhir_env (Obj.magic _menhir_stack) MenhirState7
     | NOT ->
@@ -69,10 +69,10 @@ and _menhir_run11 : _menhir_env -> 'ttv_tail * _menhir_state * 'tv_prop -> 'ttv_
     let _menhir_env = _menhir_discard _menhir_env in
     let _tok = _menhir_env._menhir_token in
     match _tok with
+    | ATOM _v ->
+        _menhir_run4 _menhir_env (Obj.magic _menhir_stack) MenhirState11 _v
     | FALSE ->
-        _menhir_run4 _menhir_env (Obj.magic _menhir_stack) MenhirState11
-    | ID _v ->
-        _menhir_run3 _menhir_env (Obj.magic _menhir_stack) MenhirState11 _v
+        _menhir_run3 _menhir_env (Obj.magic _menhir_stack) MenhirState11
     | LPAREN ->
         _menhir_run2 _menhir_env (Obj.magic _menhir_stack) MenhirState11
     | NOT ->
@@ -87,10 +87,10 @@ and _menhir_run9 : _menhir_env -> 'ttv_tail * _menhir_state * 'tv_prop -> 'ttv_r
     let _menhir_env = _menhir_discard _menhir_env in
     let _tok = _menhir_env._menhir_token in
     match _tok with
+    | ATOM _v ->
+        _menhir_run4 _menhir_env (Obj.magic _menhir_stack) MenhirState9 _v
     | FALSE ->
-        _menhir_run4 _menhir_env (Obj.magic _menhir_stack) MenhirState9
-    | ID _v ->
-        _menhir_run3 _menhir_env (Obj.magic _menhir_stack) MenhirState9 _v
+        _menhir_run3 _menhir_env (Obj.magic _menhir_stack) MenhirState9
     | LPAREN ->
         _menhir_run2 _menhir_env (Obj.magic _menhir_stack) MenhirState9
     | NOT ->
@@ -324,10 +324,10 @@ and _menhir_run1 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
     let _menhir_env = _menhir_discard _menhir_env in
     let _tok = _menhir_env._menhir_token in
     match _tok with
+    | ATOM _v ->
+        _menhir_run4 _menhir_env (Obj.magic _menhir_stack) MenhirState1 _v
     | FALSE ->
-        _menhir_run4 _menhir_env (Obj.magic _menhir_stack) MenhirState1
-    | ID _v ->
-        _menhir_run3 _menhir_env (Obj.magic _menhir_stack) MenhirState1 _v
+        _menhir_run3 _menhir_env (Obj.magic _menhir_stack) MenhirState1
     | LPAREN ->
         _menhir_run2 _menhir_env (Obj.magic _menhir_stack) MenhirState1
     | NOT ->
@@ -343,10 +343,10 @@ and _menhir_run2 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
     let _menhir_env = _menhir_discard _menhir_env in
     let _tok = _menhir_env._menhir_token in
     match _tok with
+    | ATOM _v ->
+        _menhir_run4 _menhir_env (Obj.magic _menhir_stack) MenhirState2 _v
     | FALSE ->
-        _menhir_run4 _menhir_env (Obj.magic _menhir_stack) MenhirState2
-    | ID _v ->
-        _menhir_run3 _menhir_env (Obj.magic _menhir_stack) MenhirState2 _v
+        _menhir_run3 _menhir_env (Obj.magic _menhir_stack) MenhirState2
     | LPAREN ->
         _menhir_run2 _menhir_env (Obj.magic _menhir_stack) MenhirState2
     | NOT ->
@@ -356,42 +356,42 @@ and _menhir_run2 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
         _menhir_env._menhir_error <- true;
         _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) MenhirState2
 
-and _menhir_run3 : _menhir_env -> 'ttv_tail -> _menhir_state -> (
-# 21 "propParser.mly"
-       (string)
-# 363 "propParser.ml"
-) -> 'ttv_return =
-  fun _menhir_env _menhir_stack _menhir_s _v ->
-    let _menhir_env = _menhir_discard _menhir_env in
-    let (_menhir_env : _menhir_env) = _menhir_env in
-    let (_menhir_stack : 'freshtv5) = Obj.magic _menhir_stack in
-    let (_menhir_s : _menhir_state) = _menhir_s in
-    let ((s : (
-# 21 "propParser.mly"
-       (string)
-# 373 "propParser.ml"
-    )) : (
-# 21 "propParser.mly"
-       (string)
-# 377 "propParser.ml"
-    )) = _v in
-    ((let _v : 'tv_prop = 
-# 46 "propParser.mly"
-           ( Atom s )
-# 382 "propParser.ml"
-     in
-    _menhir_goto_prop _menhir_env _menhir_stack _menhir_s _v) : 'freshtv6)
-
-and _menhir_run4 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
+and _menhir_run3 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
   fun _menhir_env _menhir_stack _menhir_s ->
     let _menhir_env = _menhir_discard _menhir_env in
     let (_menhir_env : _menhir_env) = _menhir_env in
-    let (_menhir_stack : 'freshtv3) = Obj.magic _menhir_stack in
+    let (_menhir_stack : 'freshtv5) = Obj.magic _menhir_stack in
     let (_menhir_s : _menhir_state) = _menhir_s in
     ((let _1 = () in
     let _v : 'tv_prop = 
 # 47 "propParser.mly"
           ( False )
+# 370 "propParser.ml"
+     in
+    _menhir_goto_prop _menhir_env _menhir_stack _menhir_s _v) : 'freshtv6)
+
+and _menhir_run4 : _menhir_env -> 'ttv_tail -> _menhir_state -> (
+# 21 "propParser.mly"
+       (string)
+# 377 "propParser.ml"
+) -> 'ttv_return =
+  fun _menhir_env _menhir_stack _menhir_s _v ->
+    let _menhir_env = _menhir_discard _menhir_env in
+    let (_menhir_env : _menhir_env) = _menhir_env in
+    let (_menhir_stack : 'freshtv3) = Obj.magic _menhir_stack in
+    let (_menhir_s : _menhir_state) = _menhir_s in
+    let ((s : (
+# 21 "propParser.mly"
+       (string)
+# 387 "propParser.ml"
+    )) : (
+# 21 "propParser.mly"
+       (string)
+# 391 "propParser.ml"
+    )) = _v in
+    ((let _v : 'tv_prop = 
+# 46 "propParser.mly"
+             ( Atom s )
 # 396 "propParser.ml"
      in
     _menhir_goto_prop _menhir_env _menhir_stack _menhir_s _v) : 'freshtv4)
@@ -430,10 +430,10 @@ and prog : (Lexing.lexbuf -> token) -> Lexing.lexbuf -> (
     ((let _menhir_env = _menhir_discard _menhir_env in
     let _tok = _menhir_env._menhir_token in
     match _tok with
+    | ATOM _v ->
+        _menhir_run4 _menhir_env (Obj.magic _menhir_stack) MenhirState0 _v
     | FALSE ->
-        _menhir_run4 _menhir_env (Obj.magic _menhir_stack) MenhirState0
-    | ID _v ->
-        _menhir_run3 _menhir_env (Obj.magic _menhir_stack) MenhirState0 _v
+        _menhir_run3 _menhir_env (Obj.magic _menhir_stack) MenhirState0
     | LPAREN ->
         _menhir_run2 _menhir_env (Obj.magic _menhir_stack) MenhirState0
     | NOT ->

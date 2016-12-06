@@ -7,9 +7,9 @@ type token =
   | NOT
   | LPAREN
   | IMPLIES
-  | ID of (string)
   | FALSE
   | EOF
+  | ATOM of (string)
   | AND
 
 (* This exception is raised by the monolithic API functions. *)

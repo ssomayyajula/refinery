@@ -75,27 +75,45 @@ module Logic (T : TERM_LANG) (F : FORM_LANG) :
             let (hl, hr) = List.split_n h i in
             (List.rev (List.tl_exn (List.rev hl)), f, hr))
 
+  let print_list lst =
+    print_string "[";
+    let rec helper lst =
+      match lst with
+      | []   -> ()
+      | h::t -> print_string h; print_string "; "; helper t
+    in
+      helper lst;
+      print_string "]\n"
+
   let lex_hypo hypo =
-    let lst = Str.split (Str.regexp ":") hypo in
-    match List.length lst with
-    | 0 | 1 -> failwith ("Unrecognized hypothesis: " ^ hypo)
-    | 2     -> 
-        begin
-          let var  = List.nth_exn lst 0 |> T.parse_var  in
-          let prop = List.nth_exn lst 1 |> F.parse_form in
-            (var, prop)
-        end
-    | _     -> let joined_prop = List.fold_left (List.tl_exn lst) ~init:"" ~f:(^) in
-                 failwith ("Invalid proposition: " ^ joined_prop)
+    if Str.string_match (Str.regexp "[' ' '\t']") hypo 0 then
+      failwith ("Empty hypothesis: " ^ hypo)
+    else
+      let lst = Str.split (Str.regexp ":") hypo in
+      (* print_list lst; *)
+      match List.length lst with
+      | 0 -> assert false
+      | 1 -> failwith ("Unrecognized hypothesis: " ^ hypo)
+      | 2     -> 
+          begin
+            let var  = List.nth_exn lst 0 |> T.parse_var  in
+            let prop = List.nth_exn lst 1 |> F.parse_form in
+              (var, prop)
+          end
+      | _     -> let joined_prop = List.fold_left (List.tl_exn lst) ~init:"" ~f:(^) in
+                   failwith ("Invalid proposition: " ^ joined_prop)
 
   let lex_hypos hypotheses =
     let lst = Str.split (Str.regexp ",") hypotheses in
+    (* print_list lst; *)
       List.map lst lex_hypo
 
   let parse_sequent s =
     let lst = Str.split (Str.regexp "|-") s in
+    print_list lst;
     match List.length lst with
-    | 0 | 1 -> failwith ("Unrecognized sequent: " ^ s)
+    | 0 -> assert false
+    | 1 -> failwith ("A sequent must have at least one hypothesis!")
     | 2     ->
         begin
           let hypotheses = List.nth_exn lst 0 in
