@@ -42,6 +42,7 @@ module OCaml : CAML_LIKE = struct
     | `App (e1, e2) ->
         String.pp fmt "(";
         pp_t fmt e1;
+        String.pp fmt " ";
         pp_t fmt e2;
         String.pp fmt ")"
     | `Fst e -> pp_t fmt (`App (`Var "fst", e))
@@ -54,7 +55,7 @@ module OCaml : CAML_LIKE = struct
         pp_t fmt e2;
         String.pp fmt ")"
     | `Match (e, ((c1, v1), e1), ((c2, v2), e2)) ->
-        String.pp fmt "(match";
+        String.pp fmt "(match ";
         pp_t fmt e;
         String.pp fmt (" with " ^ (c1 ^ v1) ^ " -> ");
         pp_t fmt e1;
