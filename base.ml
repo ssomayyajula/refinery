@@ -75,39 +75,45 @@ module Logic (T : TERM_LANG) (F : FORM_LANG) :
     | None   -> raise (InvalidLabel (v, h))
 
   let lex_hypo hypo =
-    if Str.string_match (Str.regexp "[' ' '\t']") hypo 0 then
-      failwith ("Empty hypothesis: " ^ hypo)
-    else
-      let lst = Str.split (Str.regexp ":") hypo in
-      match List.length lst with
-      | 0 -> assert false
-      | 1 -> failwith ("Unrecognized hypothesis: " ^ hypo)
-      | 2     -> 
-          begin
-            let var  = List.nth_exn lst 0 |> T.parse_var  in
-            let prop = List.nth_exn lst 1 |> F.parse_form in
-              (var, prop)
-          end
-      | _     -> let joined_prop = List.fold_left (List.tl_exn lst) ~init:"" ~f:(^) in
-                   failwith ("Invalid proposition: " ^ joined_prop)
+    let lst = Str.split (Str.regexp ":") hypo in
+    match List.length lst with
+    | 0 -> failwith ("Hypothesis must be a named term: " ^ hypo)
+    | 1 -> failwith ("Unrecognized hypothesis: " ^ hypo)
+    | 2 -> 
+        begin
+          let var  = List.nth_exn lst 0 |> T.parse_var  in
+          let prop = List.nth_exn lst 1 |> F.parse_form in
+            (var, prop)
+        end
+    | _ -> let joined_prop = List.fold_left (List.tl_exn lst) ~init:"" ~f:(^) in
+             failwith ("Invalid proposition: " ^ joined_prop)
 
   let lex_hypos hypotheses =
     let lst = Str.split (Str.regexp ",") hypotheses in
       List.map lst lex_hypo
 
   let parse_sequent s =
-    let lst = Str.split (Str.regexp "|-") s in
+    let lst = Str.split (Str.regexp "[' ' '\t']*|-") s in
     match List.length lst with
-    | 0 -> assert false
-    | 1 -> failwith ("A sequent must have at least one hypothesis!")
-    | 2     ->
+    | 0 -> failwith ("Sequent does not prove anything: " ^ s)
+    | 1 ->
+        begin
+          if Str.string_match (Str.regexp ".*|-.+") s 0 then
+            let c = List.nth_exn lst 0 |> F.parse_form in
+              ([], c)
+          else if Str.string_match (Str.regexp ".*|-.*") s 0 then
+            failwith ("A sequent cannot have an empty conclusion!")
+          else
+            failwith ("Sequent does not prove anything: " ^ s)
+        end
+    | 2 ->
         begin
           let hypotheses = List.nth_exn lst 0 in
           let c = List.nth_exn lst 1 |> F.parse_form in
           let hypo_lst = lex_hypos hypotheses in
             (hypo_lst, c)
         end
-    | _     -> failwith ("A sequent cannot involve multiple proofs!")
+    | _ -> failwith ("A sequent cannot involve multiple proofs!")
   
   let proof_of_sequent ((h, _) as s) =
     if List.contains_dup (List.map h fst) then
