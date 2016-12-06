@@ -1,6 +1,7 @@
 .DS_Store
 *.cm*
 refined_logic
+prop
 *.tex
 *.pdf
 *.log
