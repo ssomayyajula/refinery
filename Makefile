@@ -1,5 +1,5 @@
 # Project dependencies
-DEPS=core,ppx_import
+DEPS=core,ppx_import,str
 # Compiler and linker flags
 CC=ocamlfind ocamlc
 CFLAGS=-thread -package $(DEPS)

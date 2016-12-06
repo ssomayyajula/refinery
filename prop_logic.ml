@@ -30,7 +30,7 @@ module PropLang = struct
       | And (p1,p2) ->
           lparen prec 2;
           pp 2 p1;
-          String.pp fmt " ^ ";
+          String.pp fmt " //\ ";
           pp 2 p2;
           rparen prec 2
       | Or (p1,p2) ->

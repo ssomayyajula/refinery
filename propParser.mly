@@ -18,7 +18,7 @@
 %token OR
 %token IMPLIES
 %token FALSE
-%token <string> ID
+%token <string> ATOM
 %token EOF
 
 (* Assigns precedence and associativity to the propositional terms. *)
@@ -43,6 +43,6 @@ prop:
   | p1 = prop; AND; p2 = prop { And (p1,p2) }
   | p1 = prop; OR ; p2 = prop { Or  (p1,p2) }
   | p1 = prop; IMPLIES; p2 = prop { Implies (p1,p2) }
-  | s = ID { Atom s }
+  | s = ATOM { Atom s }
   | FALSE { False }
   ;

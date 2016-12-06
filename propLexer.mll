@@ -5,13 +5,13 @@
 (* Whitespace characters. *)
 let white = [' ' '\t']+
 
-(* An identifier is one or more alphabetic letters. *)
-let letter = ['a'-'z' 'A'-'Z']
-let id = letter+
+(* An atom is one or more alphabetic letters. The first letter must always be
+ * uppercase, to distinguish it from OCaml variables/identifiers. *)
+let atom = ['A'-'Z'] ['a'-'z' 'A'-'Z']+
 
 rule read =
   parse
-  | white { read lexbuf }
+  | white   { read lexbuf }
   | "("     { LPAREN }
   | ")"     { RPAREN }
   | "~"     { NOT }
@@ -19,5 +19,6 @@ rule read =
   | "\\/"   { OR }
   | "=>"    { IMPLIES }
   | "false" { FALSE }
-  | "id"    { ID (Lexing.lexeme lexbuf) }
+  | "atom"  { ATOM (Lexing.lexeme lexbuf) }
+  | _       { failwith ("Unexpected char: " ^ (Lexing.lexeme lexbuf)) }
   | eof     { EOF }
