@@ -74,22 +74,11 @@ module Logic (T : TERM_LANG) (F : FORM_LANG) :
         (hl, f, Option.value_map (List.tl hr) ~default:[] ~f:(Fn.id))
     | None   -> raise (InvalidLabel (v, h))
 
-  let print_list lst =
-    print_string "[";
-    let rec helper lst =
-      match lst with
-      | []   -> ()
-      | h::t -> print_string h; print_string "; "; helper t
-    in
-      helper lst;
-      print_string "]\n"
-
   let lex_hypo hypo =
     if Str.string_match (Str.regexp "[' ' '\t']") hypo 0 then
       failwith ("Empty hypothesis: " ^ hypo)
     else
       let lst = Str.split (Str.regexp ":") hypo in
-      (* print_list lst; *)
       match List.length lst with
       | 0 -> assert false
       | 1 -> failwith ("Unrecognized hypothesis: " ^ hypo)
@@ -104,12 +93,10 @@ module Logic (T : TERM_LANG) (F : FORM_LANG) :
 
   let lex_hypos hypotheses =
     let lst = Str.split (Str.regexp ",") hypotheses in
-    (* print_list lst; *)
       List.map lst lex_hypo
 
   let parse_sequent s =
     let lst = Str.split (Str.regexp "|-") s in
-    (*print_list lst;*)
     match List.length lst with
     | 0 -> assert false
     | 1 -> failwith ("A sequent must have at least one hypothesis!")
