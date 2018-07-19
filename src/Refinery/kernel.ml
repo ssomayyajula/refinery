@@ -10,6 +10,16 @@ Language/Assistant (like Isabelle)
 
 *)
 
+type proof = Goal of goal
+           | Proof of { g : goal; r : rule; mutable sub : proof ref list }
+
+type proof_state = goal ref option * proof
+
+apply_rule (g, p) {dec} =
+  match g with
+  | Some g -> match dec g with [] -> g := None | x :: l -> g := x
+  | None -> failwith ""
+
 open Core.Std
 
 (*module type TERM_LANG = [%import: (module Kernel.TERM_LANG)]
@@ -185,11 +195,13 @@ end = struct
     }
     
   let impliesR =
-    { decomposition = fun {hypotheses = hs; conclusion = c} ->
-        match c with
-        | Implies (a, b) -> [Goal.create ((T.fresh hs, a) :: hs) b]
-        | _ -> failwith "",
-      
+    { dec = function
+        | {hs; con = Implies (a, b)} -> [Goal.create ((T.fresh hs, a) :: hs) b]
+        | _ -> failwith ""
+      vl = function
+        | [{hs = (a, _) :: _}, b] -> Lam (a, b)
     }
 end
 
+type proof = Sequent of sequent
+           | Proof of 
